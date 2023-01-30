@@ -1,15 +1,15 @@
-var eventss = [ [3,5,2019,"Ergotherapie","11:30","30"],
-                [7,5,2019,"Ergotherapie","13:15","30"],
-               [8,5,2019,"Krankengymnastik","17:25","50"] ]
+var eventss = [ [2023,1,1,"Ergotherapie","11:30","30"],
+                [2023,1,3,"Ergotherapie","13:15","30"],
+                [9,1,2023,"Ergotherapie","13:15","30"],
+               [3,2,2023,"Krankengymnastik","17:25","50"] ]
 
 
 var monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 var weekNames = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
 var monthDays = [31,28,31,30,31,30,31,31,30,31,30,31]
-var monthBegin = [1,-2,-2, 2, 0,-3, 2,-1,-4, 1,-2,-4]
 
 
-class C_Calender {
+class C_Calendar {
     constructor(event){
         // elements which form calenderApp
         this.calenderApp = this.crElset("div","id","calenderApp")
@@ -23,6 +23,8 @@ class C_Calender {
         this.month = new Date().getMonth()
         this.year = new Date().getFullYear()
 
+        this.starts = new Array(12).fill(0)
+        this.calcyear(0)
 
         // structure
         this.calenderApp.append(this.calender)
@@ -67,7 +69,7 @@ class C_Calender {
         calenderTable.append(this.createMonthRow(14))
         calenderTable.append(this.createMonthRow(21))
         calenderTable.append(this.createMonthRow(28))
-        if(monthBegin[this.month] < -3 && monthDays[this.month ] > 29) {
+        if(this.starts[this.month] < 1 && monthDays[this.month ] > 29) {
             calenderTable.append(this.createMonthRow(35))
         }
         return calenderTable
@@ -98,12 +100,12 @@ class C_Calender {
     writeCell(day,o,that,eve){
         let cell = this.crElset("td","class","cell")
          // number which is written in cell
-         let cur = monthBegin[this.month] - 2 + parseInt(day) + parseInt(o) 
-         if(0 < cur  && cur <= monthDays[this.month]){
+         let cur = - this.starts[this.month]  + parseInt(day) + parseInt(o) 
+         if(0 <= cur  && cur < monthDays[this.month]){
             cell.className += " day"
-            this.eventORtoday(eve,cur,cell)
-            cell.onclick = function() { that.openEvent(eve, cur, day)}
-            cell.append(document.createTextNode(cur))
+            this.eventORtoday(eve,cur+1,cell)
+            cell.onclick = function() { that.openEvent(eve, cur+1, day)}
+            cell.append(document.createTextNode(cur+1))
         }
         return cell
     }
@@ -111,7 +113,7 @@ class C_Calender {
     eventORtoday(eve,cur,cell){
         for (var i in this.events ){
             if (cur==this.events[i][2] && this.month == this.events[i][1]-1 && this.year == this.events[i][0]) {
-                cell.className = "eventDay"
+                cell.className += " eventday"
                 eve.push(this.events[i])
             }
         }
@@ -139,12 +141,12 @@ class C_Calender {
         for (var j in eve){
             var row2 = document.createElement("tr")
             for(var i in array){
- //               if(j==0){
- //                   var th = document.createElement("th")
-//                    th.append(document.createTextNode(array[i]))
-//                    row.append(th)
-//                    table.append(row)
-//                }
+               if(j==0){
+                   var th = document.createElement("th")
+                   th.append(document.createTextNode(array[i]))
+                   row.append(th)
+                   table.append(row)
+               }
                 var td = document.createElement("td")
                 td.append( document.createTextNode(eve[j][i- -3]))
                 row2.append(td)
@@ -155,20 +157,17 @@ class C_Calender {
     }
 
     calcyear(d){
+        let first = (this.year - 2023)%7
         var schlatjahr = this.year%4==0?1:0
         if (schlatjahr){
             monthDays[1]=29
-            for (var j in monthBegin){
-                if ( j>1)
-                    monthBegin[j]+=d
-            }
         } else {
             monthDays[1]=28
         }
-        for (var j in monthBegin){
-            monthBegin[j]+=d
-            monthBegin[j] = monthBegin[j]==3?-4:monthBegin[j]
-            monthBegin[j] = monthBegin[j]==-5?2:monthBegin[j]
+        this.starts[0]=first
+        for (let j=0; j<12; j++){
+            this.starts[j+1] = (this.starts[j] + monthDays[j]%7)%7
+            console.log(this.starts[j])
         }
     }
 

@@ -4,8 +4,8 @@
 }
 
 #calenderApp .calender {
-    width: 500;
-    height: 200;
+    width: 700px;
+    height: 300px;
     border: 2px solid #8dfdff;
     margin:5;
     padding: 5;
@@ -14,9 +14,9 @@
   }
 
 #calenderApp .calender .monthBar {
-    font-size: 25;
+    font-size: 25px;
     background-color: #023a53;
-    height:30;
+    height:30px;
     color:#8dfdff
 }
 
@@ -28,7 +28,7 @@
 
 #calenderApp .calender .monthTable {
     width: 100%;
-    height:170;
+    height:170px;
 }
 
 #calenderApp .calender .monthTable .weekNames {
@@ -36,8 +36,13 @@
     border: 0px;
 }
 
+#calenderApp .calender .monthTable .day {
+    color: white;
+}
+
 #calenderApp .calender .monthTable .day:hover {
     background-color: #023a53;
+    cursor: pointer;
 }
 
 #calenderApp .calender .monthTable .eventday {
